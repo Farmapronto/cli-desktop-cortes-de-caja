@@ -11,7 +11,7 @@ function createWindow() {
     }
   })
 
-  mainWindow.loadURL('http://localhost:5173')
+  mainWindow.loadURL('http://localhost:5173'); // Tu aplicación Vue
 }
 
 app.whenReady().then(() => {
