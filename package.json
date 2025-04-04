@@ -13,7 +13,30 @@
     "rebuild": "electron-rebuild",
     "dist": "npm run build && electron-builder"
   },
-  "main": "src/electron/main.js",
+  "build": {
+    "files": [
+      "dist/**/*",
+      "electron/main.js"
+    ],
+  "appId": "com.tuempresa.tuapp",
+  "productName": "cli-farmacia",
+  "mac": {
+    "target": [
+      "dmg",
+      "zip"
+    ]
+  },
+  "win": {
+    "target": [
+      "nsis",
+      "zip"
+    ]
+    },
+  "directories": {
+    "output": "dist"
+  }
+},
+  "main": "electron/main.js",
   "dependencies": {
     "@heroicons/vue": "^2.2.0",
     "@tailwindcss/vite": "^4.1.0",

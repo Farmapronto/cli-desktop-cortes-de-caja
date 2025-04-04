@@ -6,13 +6,18 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: './', 
   plugins: [
     vue(),
     tailwindcss(),
   ],
+  build: {
+    outDir: path.resolve(__dirname, 'dist'),
+    emptyOutDir: true,
+  },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'), // Esto configura el alias @ para la carpeta src
+      '@': path.resolve(__dirname, 'src'),
     },
   },
 })
