@@ -10,6 +10,11 @@ const routes = [
     component: DashboardView
   },
   {
+    path: '/newcorte',
+    name: 'NewCorte',
+    component: () => import('@/views/NewCorteMultiStepForm.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFoundView
