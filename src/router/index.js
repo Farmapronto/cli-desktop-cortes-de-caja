@@ -18,7 +18,12 @@ const routes = [
     path: '/cortes',
     name: 'Cortes',
     component: () => import('@/views/CortesView.vue')
-  },  
+  },
+  {
+    path:'/cortedetallado',
+    name: 'CortesDetallados',
+    component: () => import('@/views/CortesDetailView.vue')
+  },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
