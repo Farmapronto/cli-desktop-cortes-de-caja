@@ -15,6 +15,16 @@ const routes = [
     component: () => import('@/views/NewCorteMultiStepForm.vue')
   },
   {
+    path: '/cortes',
+    name: 'Cortes',
+    component: () => import('@/views/CortesView.vue')
+  },
+  {
+    path:'/cortedetallado',
+    name: 'CortesDetallados',
+    component: () => import('@/views/CortesDetailView.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFoundView
