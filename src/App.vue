@@ -1,10 +1,13 @@
 <script setup>
-import Home from './views/Home.vue';
-
+import SideBar from '@/components/SideBar.vue';
 </script>
 
 <template>
-  <Home />
+	<div class="flex h-screen bg-gray-50">
+		<SideBar />
+
+		<div class="flex-1 p-8">
+			<router-view />
+		</div>
+	</div>
 </template>
-
-
