@@ -1,30 +1,54 @@
 <template>
-    <div class="space-y-4">
-      <div>
-        <label class="label"><span class="label-text">Fecha</span></label>
-        <input
-          type="date"
-          class="input input-bordered w-full"
-          v-model="formStore.corteActual.fecha"
-        />
-      </div>
-  
-      <div>
-        <label class="label"><span class="label-text">Cajero</span></label>
-        <select class="select select-bordered w-full" v-model="formStore.corteActual.cajero">
-          <option disabled value="">Selecciona un cajero</option>
-          <option>Cajero 1</option>
-          <option>Cajero 2</option>
-          <option>Cajero 3</option>
-          <option>Cajero 4</option>
-        </select>
-      </div>
+  <div class="space-y-6">
+    <!-- Fecha -->
+    <div
+      class="flex flex-col gap-2 cursor-pointer"
+      @click="focusFecha"
+    >
+      <label for="fecha" class="text-sm font-medium text-gray-700">
+        Fecha del corte
+      </label>
+      <input
+        id="fecha"
+        ref="fechaInput"
+        type="date"
+        v-model="formStore.corteActual.fecha"
+        class="input input-bordered w-full focus:input-primary transition-all"
+      />
     </div>
-  </template>
-  
-  <script setup>
-  import { useFormStore } from '@/stores/formStore'
-  const formStore = useFormStore()
-  
+
+    <!-- Cajero -->
+    <div class="flex flex-col gap-2">
+      <label for="cajero" class="text-sm font-medium text-gray-700">
+        Selecciona el cajero
+      </label>
+      <select
+        id="cajero"
+        v-model="formStore.corteActual.cajero"
+        class="select select-bordered w-full focus:select-primary transition-all"
+      >
+        <option disabled value="">-- Selecciona un cajero --</option>
+        <option>Cajero 1</option>
+        <option>Cajero 2</option>
+        <option>Cajero 3</option>
+        <option>Cajero 4</option>
+      </select>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { useFormStore } from '@/stores/formStore'
+
+const formStore = useFormStore()
+const fechaInput = ref(null)
+
+const focusFecha = () => {
+  if (fechaInput.value?.showPicker) {
+    fechaInput.value.showPicker()
+  } else {
+    fechaInput.value.focus()
+  }
+}
 </script>
-  
