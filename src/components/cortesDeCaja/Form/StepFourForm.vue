@@ -1,7 +1,8 @@
 <template>
   <div class="space-y-4">
+    <label class="label"><span class="label-text">Gasto farmacia ($)</span></label>
+
     <div class="flex gap-4">
-      <label class="label"><span class="label-text">Gasto farmacia ($)</span></label>
       <input
         type="number"
         min="0"
@@ -21,7 +22,7 @@
 
     <div>
       <label class="label"><span class="label-text">Compras farmacia ($)</span></label>
-      <div class="flex gap-2">
+      <div class="flex gap-4">
         <input
           type="number"
           min="0"
