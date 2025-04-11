@@ -57,6 +57,22 @@
     <th class="text-left px-4 py-2">Tarjeta 4</th>
     <th class="text-left px-4 py-2">Venta Total</th>
     <th class="text-left px-4 py-2">Total Tarjetas</th>
+    <th class="text-left px-4 py-2">Gastos Farmacia</th>
+    <th class="text-left px-4 py-2">Concepto</th>
+    <th class="text-left px-4 py-2">Tipo de Compra</th>
+    <th class="text-left px-4 py-2">Compras</th>
+    <th class="text-left px-4 py-2">Sobrante C1</th>
+    <th class="text-left px-4 py-2">Sobrante C2</th>
+    <th class="text-left px-4 py-2">Sobrante C3</th>
+    <th class="text-left px-4 py-2">Sobrante C4</th>
+    <th class="text-left px-4 py-2">Faltante C1</th>
+    <th class="text-left px-4 py-2">Faltante C2</th>
+    <th class="text-left px-4 py-2">Faltante C3</th>
+    <th class="text-left px-4 py-2">Faltante C4</th>
+    <th class="text-left px-4 py-2">78%</th>
+    <th class="text-left px-4 py-2">22%</th>
+    <th class="text-left px-4 py-2">TOTAL A DÉPOSITAR</th>
+
   </tr>
 </thead>
 

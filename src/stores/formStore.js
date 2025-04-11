@@ -55,7 +55,9 @@ export const useFormStore = defineStore('formStore', () => {
       },
       gastos: {
         gastoFarmacia: 0,
-        comprasFarmacia: 0
+        conceptoGastoFarmacia: '',
+        comprasFarmacia: 0,
+        tipoCompraFarmacia: '',
       }
     }
   }
