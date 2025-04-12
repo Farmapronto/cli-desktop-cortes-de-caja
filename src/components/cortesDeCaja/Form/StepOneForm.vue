@@ -28,10 +28,10 @@
         class="select select-bordered w-full focus:select-primary transition-all"
       >
         <option disabled value="">-- Selecciona un cajero --</option>
-        <option>Cajero 1</option>
-        <option>Cajero 2</option>
-        <option>Cajero 3</option>
-        <option>Cajero 4</option>
+        <option :value="1">Cajero 1</option>
+        <option :value="2">Cajero 2</option>
+        <option :value="3">Cajero 3</option>
+        <option :value="4">Cajero 4</option>
       </select>
     </div>
   </div>

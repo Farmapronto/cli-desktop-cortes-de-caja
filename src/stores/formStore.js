@@ -7,8 +7,8 @@ export const useFormStore = defineStore('formStore', () => {
   const cortes = ref([])
 
   // Puedes obtener estos valores desde login o algún otro store según tu flujo
-  const userId = ref('c176c99b-8356-4691-b87e-7f55cce28c86')
-  const branchId = ref('2b748144-a8dc-4d72-a5a9-f84c6e93e82e')
+  const userId = ref('6c370f57-fa6e-4ce3-8686-dd8fc7352407')
+  const branchId = ref('86bd6d81-ee0d-4f63-b661-c058093e590a')
 
   const corteActual = ref({
     fecha: '',
@@ -48,17 +48,20 @@ export const useFormStore = defineStore('formStore', () => {
       gastoFarmacia: corteActual.value.gastos.gastoFarmacia,
       compraFarmacia: corteActual.value.gastos.comprasFarmacia,
       sobrante: corteActual.value.corte.sobrante,
-      faltante: corteActual.value.corte.faltante
+      faltante: corteActual.value.corte.faltante,
+      totalPorCajero: corteActual.value.montos.efectivo + corteActual.value.montos.tarjeta 
     }
-
+  
     try {
-      await crearCorte(corteFinal) // Petición real al backend
+      console.log('Payload a enviar:', corteFinal)
+      await crearCorte(corteFinal)
       cortes.value.push(corteFinal)
       resetCorteActual()
     } catch (err) {
       console.error('Error al enviar corte:', err)
     }
   }
+  
 
   const resetCorteActual = () => {
     corteActual.value = {

@@ -98,20 +98,18 @@ const toastMessage = ref('')
 
 const submitForm = async () => {
   try {
-    const payload = formStore.getFormularioCompleto // <- Asegúrate de tener esto en tu store
-    console.log(payload)
-    //await crearCorte(payload) // Aquí va la petición al backend
+    console.log('📦 Datos antes de enviar:', formStore.corteActual)
+    await formStore.enviarCorte()
     toastMessage.value = '🎉 Reporte enviado exitosamente!'
     showToast.value = true
-    setTimeout(() => {
-      router.push('/')
-    }, 1000)
+    setTimeout(() => router.push('/'), 1000)
   } catch (error) {
-    console.error('Error al enviar el reporte:', error)
+    console.error('❌ Error al enviar el reporte:', error)
     toastMessage.value = '❌ Ocurrió un error al enviar el reporte.'
     showToast.value = true
   }
 }
+
 </script>
 
 <style scoped>
