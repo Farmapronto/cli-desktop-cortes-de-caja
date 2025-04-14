@@ -1,9 +1,14 @@
 // stores/formStore.js
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { crearCorte } from '@/services/cortes.services.js'
 
 export const useFormStore = defineStore('formStore', () => {
   const cortes = ref([])
+
+  // Puedes obtener estos valores desde login o algún otro store según tu flujo
+  const userId = ref('6c370f57-fa6e-4ce3-8686-dd8fc7352407')
+  const branchId = ref('86bd6d81-ee0d-4f63-b661-c058093e590a')
 
   const corteActual = ref({
     fecha: '',
@@ -18,7 +23,9 @@ export const useFormStore = defineStore('formStore', () => {
     },
     gastos: {
       gastoFarmacia: 0,
-      comprasFarmacia: 0
+      conceptoGastoFarmacia: '',
+      comprasFarmacia: 0,
+      tipoCompraFarmacia: ''
     }
   })
 
@@ -27,19 +34,34 @@ export const useFormStore = defineStore('formStore', () => {
   }
 
   const obtenerFechaHoraActual = () => {
-    return new Date().toISOString() // Ejemplo: "2025-04-04T22:31:00.000Z"
+    return new Date().toISOString()
   }
 
-  const enviarCorte = () => {
-    const corteConMetadata = {
-      ...corteActual.value,
-      id: generarIdUnico(),
-      generadoEn: obtenerFechaHoraActual()
+  const enviarCorte = async () => {
+    const corteFinal = {
+      userId: userId.value,
+      branchId: branchId.value,
+      fecha: obtenerFechaHoraActual(),
+      cajero: corteActual.value.cajero,
+      efectivo: corteActual.value.montos.efectivo,
+      tarjeta: corteActual.value.montos.tarjeta,
+      gastoFarmacia: corteActual.value.gastos.gastoFarmacia,
+      compraFarmacia: corteActual.value.gastos.comprasFarmacia,
+      sobrante: corteActual.value.corte.sobrante,
+      faltante: corteActual.value.corte.faltante,
+      totalPorCajero: corteActual.value.montos.efectivo + corteActual.value.montos.tarjeta 
     }
-
-    cortes.value.push(corteConMetadata)
-    resetCorteActual()
+  
+    try {
+      console.log('Payload a enviar:', corteFinal)
+      await crearCorte(corteFinal)
+      cortes.value.push(corteFinal)
+      resetCorteActual()
+    } catch (err) {
+      console.error('Error al enviar corte:', err)
+    }
   }
+  
 
   const resetCorteActual = () => {
     corteActual.value = {
@@ -57,10 +79,17 @@ export const useFormStore = defineStore('formStore', () => {
         gastoFarmacia: 0,
         conceptoGastoFarmacia: '',
         comprasFarmacia: 0,
-        tipoCompraFarmacia: '',
+        tipoCompraFarmacia: ''
       }
     }
   }
 
-  return { cortes, corteActual, enviarCorte, resetCorteActual }
+  return {
+    cortes,
+    corteActual,
+    userId,
+    branchId,
+    enviarCorte,
+    resetCorteActual
+  }
 })
