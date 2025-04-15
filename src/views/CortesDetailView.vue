@@ -107,9 +107,10 @@
     </div>
   </template>
   
-  <script setup>
+<script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import * as XLSX from 'xlsx'
 
 // Parámetros para la petición
 const branchId = '86bd6d81-ee0d-4f63-b661-c058093e590a'
@@ -180,6 +181,81 @@ const fetchCortes = async () => {
 onMounted(() => {
   fetchCortes()
 })
-</script>
 
-  
+const exportToExcel = () => {
+  const data = []
+
+  for (const fecha in cortesAgrupados.value) {
+    const corte = cortesAgrupados.value[fecha]
+
+    // Cajeros y tarjetas individuales
+    const cajero1 = corte.cajeros['1'] || {}
+    const cajero2 = corte.cajeros['2'] || {}
+    const cajero3 = corte.cajeros['3'] || {}
+    const cajero4 = corte.cajeros['4'] || {}
+
+    data.push({
+      'Fecha': fecha,
+
+      // Efectivo por cajero (sumamos todo menos tarjetas)
+      'Cajero 1': totalSinTarjetas(cajero1),
+      'Cajero 2': totalSinTarjetas(cajero2),
+      'Cajero 3': totalSinTarjetas(cajero3),
+      'Cajero 4': totalSinTarjetas(cajero4),
+
+      // Tarjetas individuales (se asume tarjeta1 a tarjeta4)
+      'Tarjeta 1': sumaTarjetaN([cajero1, cajero2, cajero3, cajero4], 'tarjeta1'),
+      'Tarjeta 2': sumaTarjetaN([cajero1, cajero2, cajero3, cajero4], 'tarjeta2'),
+      'Tarjeta 3': sumaTarjetaN([cajero1, cajero2, cajero3, cajero4], 'tarjeta3'),
+      'Tarjeta 4': sumaTarjetaN([cajero1, cajero2, cajero3, cajero4], 'tarjeta4'),
+
+      'Venta Total': corte.totalEfectivo || 0,
+      'Total Tarjetas': corte.totalTarjeta || 0,
+      'Gastos Farmacia': corte.totalGastoFarmacia || 0,
+
+      'Concepto': '', // Puedes rellenar si aplica
+      'Tipo de Compra': '',
+
+      'Compras': corte.totalCompraFarmacia || 0,
+
+      'Sobrante C1': cajero1.sobrante || 0,
+      'Sobrante C2': cajero2.sobrante || 0,
+      'Sobrante C3': cajero3.sobrante || 0,
+      'Sobrante C4': cajero4.sobrante || 0,
+
+      'Faltante C1': cajero1.faltante || 0,
+      'Faltante C2': cajero2.faltante || 0,
+      'Faltante C3': cajero3.faltante || 0,
+      'Faltante C4': cajero4.faltante || 0,
+
+      '78%': corte.porcentajeADepositar || 0,
+      '22%': corte.restoADepositar || 0,
+
+      'TOTAL A DÉPOSITAR': corte.totalADepositar || 0
+    })
+  }
+
+  const worksheet = XLSX.utils.json_to_sheet(data)
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Cortes')
+  XLSX.writeFile(workbook, 'cortes.xlsx')
+}
+
+// Helpers
+const totalSinTarjetas = (cajero) => {
+  let total = 0
+  for (const key in cajero) {
+    if (!key.includes('tarjeta')) {
+      total += cajero[key] || 0
+    }
+  }
+  return total
+}
+
+const sumaTarjetaN = (cajeros, tarjetaKey) => {
+  return cajeros.reduce((acc, cajero) => {
+    return acc + (cajero[tarjetaKey] || 0)
+  }, 0)
+}
+
+</script>
