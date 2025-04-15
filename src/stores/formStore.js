@@ -28,6 +28,10 @@ export const useFormStore = defineStore('formStore', () => {
       conceptoGastoFarmacia: '',
       comprasFarmacia: 0,
       tipoCompraFarmacia: ''
+    },
+    movimientos: {
+      retiroTarjeta: 0,
+      depositoTarjeta: 0
     }
   })
 
@@ -50,7 +54,8 @@ export const useFormStore = defineStore('formStore', () => {
       compraFarmacia: corteActual.value.gastos.comprasFarmacia,
       tipoCompraFarmacia: corteActual.value.gastos.tipoCompraFarmacia,
       sobrante: corteActual.value.corte.sobrante,
-      faltante: corteActual.value.corte.faltante
+      faltante: corteActual.value.corte.faltante,
+      retiroTarjeta: corteActual.value.movimientos.retiroTarjeta
       //totalPorCajero: (corteActual.value.montos.efectivo + corteActual.value.montos.tarjeta + corteActual.value.corte.sobrante) - (corteActual.value.corte.faltante + corteActual.value.gastos.gastoFarmacia + corteActual.value.gastos.comprasFarmacia)
     }
   
