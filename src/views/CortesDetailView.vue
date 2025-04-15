@@ -76,15 +76,31 @@
   </tr>
 </thead>
 
-  <tbody>
-    <tr v-for="(data, fecha) in cortesAgrupados" :key="fecha">
-      <td>{{ fecha }}</td>
-      <td v-for="i in 4" :key="i">{{ data.cajeros[i].efectivo || '-' }}</td>
-      <td v-for="i in 4" :key="'tarjeta' + i">{{ data.cajeros[i].tarjeta || '-' }}</td>
-      <td>{{ data.totalEfectivo }}</td>
-      <td>{{ data.totalTarjeta }}</td>
-    </tr>
-  </tbody>
+<tbody>
+  <tr v-for="(data, fecha) in cortesAgrupados" :key="fecha">
+    <td>{{ fecha }}</td>
+    <td v-for="i in 4" :key="i">{{ data.cajeros[i].efectivo || '-' }}</td>
+    <td v-for="i in 4" :key="'tarjeta' + i">{{ data.cajeros[i].tarjeta || '-' }}</td>
+    <td>{{ data.totalEfectivo || '-' }}</td>
+    <td>{{ data.totalTarjeta || '-' }}</td>
+    <td>{{ data.totalGastoFarmacia || '-' }}</td>
+    <td>{{ data.concepto || '-' }}</td> <!-- Esto depende de que tengas esa propiedad -->
+    <td>{{ data.tipoCompra || '-' }}</td> <!-- Esto también -->
+    <td>{{ data.totalCompraFarmacia || '-' }}</td>
+    <td>{{ data.cajeros[1].sobrante || '-' }}</td>
+    <td>{{ data.cajeros[2].sobrante || '-' }}</td>
+    <td>{{ data.cajeros[3].sobrante || '-' }}</td>
+    <td>{{ data.cajeros[4].sobrante || '-' }}</td>
+    <td>{{ data.cajeros[1].faltante || '-' }}</td>
+    <td>{{ data.cajeros[2].faltante || '-' }}</td>
+    <td>{{ data.cajeros[3].faltante || '-' }}</td>
+    <td>{{ data.cajeros[4].faltante || '-' }}</td>
+    <td>{{ data.porcentajeADepositar || '-' }}</td>
+    <td>{{ data.restoADepositar || '-' }}</td>
+    <td>{{ data.totalADepositar || '-' }}</td>
+  </tr>
+</tbody>
+
 </table>
 
       </div>
@@ -92,40 +108,78 @@
   </template>
   
   <script setup>
-  import { useFormStore } from '@/stores/formStore'
-  import { computed } from 'vue'
-  
-  const formStore = useFormStore()
-  
-  const cortesAgrupados = computed(() => {
-    const grupos = {}
-  
-    formStore.cortes.forEach((corte) => {
-      if (!grupos[corte.fecha]) {
-        grupos[corte.fecha] = {
-          cajeros: {
-            1: { efectivo: 0, tarjeta: 0 },
-            2: { efectivo: 0, tarjeta: 0 },
-            3: { efectivo: 0, tarjeta: 0 },
-            4: { efectivo: 0, tarjeta: 0 }
-          },
-          totalEfectivo: 0,
-          totalTarjeta: 0
-        }
-      }
-  
-      // Detectar número de cajero
-      const numCajero = parseInt(corte.cajero.split(' ')[1]) // Asumiendo que es tipo 'Cajero 1'
-  
-      grupos[corte.fecha].cajeros[numCajero].efectivo = corte.montos.efectivo
-      grupos[corte.fecha].cajeros[numCajero].tarjeta = corte.montos.tarjeta
-  
-      grupos[corte.fecha].totalEfectivo += corte.montos.efectivo
-      grupos[corte.fecha].totalTarjeta += corte.montos.tarjeta
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+// Parámetros para la petición
+const branchId = '86bd6d81-ee0d-4f63-b661-c058093e590a'
+const fechaInicio = '2025-04-01'
+const fechaFin = '2025-04-30'
+
+// Donde se guarda la data agrupada por fecha
+const cortesAgrupados = ref({})
+
+// Para los totales de los cards resumen
+const totalVentas = ref(0)
+const totalTarjetas = ref(0)
+const totalSobrantes = ref(0)
+const totalFaltantes = ref(0)
+
+const fetchCortes = async () => {
+  try {
+    const response = await axios.post('http://localhost:3000/api/cortes/detalle', {
+      branchId,
+      fechaInicio,
+      fechaFin
     })
-  
-    return grupos
-  })
-  </script>
-  
+
+    const data = response.data
+    const grupos = {}
+    let ventas = 0
+    let tarjetas = 0
+    let sobrantes = 0
+    let faltantes = 0
+
+    data.forEach((corte) => {
+      const fecha = corte.fecha
+      grupos[fecha] = {
+        cajeros: {
+          1: corte.cajeros['1'] || {},
+          2: corte.cajeros['2'] || {},
+          3: corte.cajeros['3'] || {},
+          4: corte.cajeros['4'] || {}
+        },
+        totalEfectivo: corte.totalEfectivo,
+        totalTarjeta: corte.totalTarjeta,
+        totalGastoFarmacia: corte.totalGastoFarmacia,
+        totalCompraFarmacia: corte.totalCompraFarmacia,
+        totalSobrante: corte.totalSobrante,
+        totalFaltante: corte.totalFaltante,
+        totalADepositar: corte.totalADepositar,
+        porcentajeADepositar: corte.porcentajeADepositar,
+        restoADepositar: corte.restoADepositar
+      }
+
+      ventas += corte.totalEfectivo
+      tarjetas += corte.totalTarjeta
+      sobrantes += corte.totalSobrante
+      faltantes += corte.totalFaltante
+    })
+
+    cortesAgrupados.value = grupos
+    totalVentas.value = ventas
+    totalTarjetas.value = tarjetas
+    totalSobrantes.value = sobrantes
+    totalFaltantes.value = faltantes
+  } catch (error) {
+    console.error('Error al obtener los cortes:', error)
+  }
+}
+
+// Ejecutar al montar componente
+onMounted(() => {
+  fetchCortes()
+})
+</script>
+
   
