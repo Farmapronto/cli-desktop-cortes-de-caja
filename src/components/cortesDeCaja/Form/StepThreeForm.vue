@@ -21,6 +21,17 @@
           placeholder="0.00"
         />
       </div>
+      <div>
+        <label class="label"><span class="label-text">Retiro con tarjeta ($)</span></label>
+        <input
+          type="number"
+          min="0"
+          class="input input-bordered w-full"
+          v-model="formStore.corteActual.movimientos.retiroTarjeta"
+          placeholder="0.00"
+          disabled
+        />
+      </div>
     </div>
   </template>
   

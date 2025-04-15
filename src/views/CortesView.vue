@@ -42,33 +42,46 @@
           <tr class="bg-[#009fe3] text-white">
             <th class="hidden md:table-cell">ID</th>
             <th>Fecha</th>
-            <th>Hora</th>
+            <!-- <th>Hora</th> -->
             <th>Cajero</th>
             <th>Efectivo</th>
             <th>Tarjeta</th>
+            <th>Gasto Farmacia</th>
+            <th>Concepto</th>
+            <th>Compra Farmacia</th>
+            <th>Tipo de Compra</th>
+            <th>Retiro</th>
             <th class="hidden md:table-cell">Sobrante</th>
             <th class="hidden md:table-cell">Faltante</th>
+            <th class="hidden md:table-cell">Total por Cajero</th>
           </tr>
         </thead>
         <tbody>
           <tr
-            v-for="corte in formStore.cortes"
+            v-for="corte in cortes"
             :key="corte.id"
             class="hover:bg-gray-100 transition duration-200"
           >
+
             <td class="hidden md:table-cell text-gray-500">#{{ corte.id }}</td>
-            <td>{{ corte.fecha }}</td>
-            <td>{{ corte.horaCorte }}</td>
+            <td>{{ formatDateToDDMMYYYY(corte.fecha) }}</td>
+            <!-- <td>{{ formatTimeToHHMMAMPM(corte.fecha) }}</td> -->
             <td class="font-semibold text-[#009fe3] flex items-center gap-1">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c3.314 0 6.374 1.21 8.879 3.204M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              {{ corte.cajero }}
+              Cajero {{corte.cajero}}
             </td>
-            <td class="text-green-600 font-medium">${{ corte.montos.efectivo }}</td>
-            <td class="text-blue-600 font-medium">${{ corte.montos.tarjeta }}</td>
-            <td class="hidden md:table-cell text-orange-500">${{ corte.corte.sobrante }}</td>
-            <td class="hidden md:table-cell text-red-500">${{ corte.corte.faltante }}</td>
+            <td class="text-green-600 font-medium">${{ corte.efectivo }}</td>
+            <td class="text-blue-600 font-medium">${{ corte.tarjeta }}</td>
+            <td>{{ corte.gastoFarmacia }}</td>
+            <td>{{ corte.conceptoGastoFarmacia }}</td>
+            <td>{{ corte.compraFarmacia }}</td>
+            <td> {{ corte.tipoCompraFarmacia }} </td>
+            <td> {{ corte.retiroTarjeta }} </td>
+            <td class="hidden md:table-cell text-orange-500">${{ corte.sobrante }}</td>
+            <td class="hidden md:table-cell text-red-500">${{ corte.faltante }}</td>
+            <td class="hidden md:table-cell text-teal-600">${{ corte.totalPorCajero }}</td>
           </tr>
         </tbody>
       </table>
@@ -79,26 +92,76 @@
 <script setup>
 import { useFormStore } from '@/stores/formStore';
 import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue';
 import * as XLSX from 'xlsx';
+import axios from 'axios'
+import { obtenerRangoMesActual, formatearISOaYYYYMMDD } from '@/utils/fechas' // ajusta según tu estructura
+
+const { fechaInicio, fechaFin } = obtenerRangoMesActual();
+console.log(formatearISOaYYYYMMDD(fechaFin), formatearISOaYYYYMMDD(fechaInicio), 'jjjjj')
 
 const formStore = useFormStore();
 const router = useRouter()
 
+const cortes = ref([])
+
+
+const obtenerCortes = async () => {
+  try {
+    const response = await axios.post('http://localhost:3000/api/cortes/fechas-sucursal', {
+      fechaInicio: formatearISOaYYYYMMDD(fechaInicio),
+      fechaFin: formatearISOaYYYYMMDD(fechaFin),
+      branchId: '86bd6d81-ee0d-4f63-b661-c058093e590a'
+    })
+    cortes.value = response.data
+  } catch (error) {
+    console.error('Error al obtener cortes:', error)
+  }
+}
+
+const formatDateToDDMMYYYY = (dateString) => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');     // Día con dos dígitos
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes con dos dígitos (0-indexado)
+  const year = date.getFullYear();                        // Año completo
+
+  return `${day}/${month}/${year}`;
+}
+
+const formatTimeToHHMMAMPM = (dateString) => {
+  const date = new Date(dateString);
+  let hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+
+  hours = hours % 12;
+  hours = hours ? hours : 12; // La hora '0' debe ser '12'
+  const formattedHours = String(hours).padStart(2, '0');
+
+  return `${formattedHours}:${minutes} ${ampm}`;
+}
+
+
+onMounted(() => {
+  obtenerCortes()
+})
+
 const exportarExcel = () => {
-  const cortesData = formStore.cortes.map(corte => ({
-    ID: corte.id,
-    Fecha: corte.fecha,
+  const cortesData = cortes.value.map(corte => ({
+    //ID: corte.id,
+    Fecha: formatDateToDDMMYYYY(corte.fecha),
     Cajero: corte.cajero,
-    Efectivo: `$${corte.montos.efectivo}`,
-    Tarjeta: `$${corte.montos.tarjeta}`,
-    Sobrante: `$${corte.corte.sobrante}`,
-    Faltante: `$${corte.corte.faltante}`
+    Efectivo: `$${corte.efectivo}`,
+    Tarjeta: `$${corte.tarjeta}`,
+    Sobrante: `$${corte.sobrante}`,
+    Faltante: `$${corte.faltante}`,
+    Total: `$${corte.totalPorCajero}`
   }));
 
-  // Convierte los cortes a una hoja de Excel
   const ws = XLSX.utils.json_to_sheet(cortesData);
-  const wb = XLSX.utils.book_new(); // Crea un libro de Excel
-  XLSX.utils.book_append_sheet(wb, ws, 'Cortes'); // Agrega la hoja al libro
-  XLSX.writeFile(wb, 'cortes.xlsx'); // Descarga el archivo Excel
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Cortes');
+  XLSX.writeFile(wb, 'cortes.xlsx');
 };
+
 </script>
