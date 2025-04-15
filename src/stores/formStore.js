@@ -33,6 +33,17 @@ export const useFormStore = defineStore('formStore', () => {
     return `corte_${Date.now()}_${Math.floor(Math.random() * 1000)}`
   }
 
+  const combinarFechaConHoraLocal = (fechaSeleccionada) => {
+    const fecha = new Date(fechaSeleccionada); // Esto ya es en tu zona horaria local si trabajas con Date
+    const ahora = new Date();
+  
+    // En lugar de modificar la fecha UTC, lo hacemos en local:
+    fecha.setHours(ahora.getHours(), ahora.getMinutes(), ahora.getSeconds(), ahora.getMilliseconds());
+  
+    return fecha;
+  }
+  
+  
   const obtenerFechaHoraActual = () => {
     return new Date().toISOString()
   }
@@ -41,7 +52,7 @@ export const useFormStore = defineStore('formStore', () => {
     const corteFinal = {
       userId: userId.value,
       branchId: branchId.value,
-      fecha: obtenerFechaHoraActual(),
+      fecha: combinarFechaConHoraLocal(corteActual.value.fecha),
       cajero: corteActual.value.cajero,
       efectivo: corteActual.value.montos.efectivo,
       tarjeta: corteActual.value.montos.tarjeta,
@@ -49,7 +60,7 @@ export const useFormStore = defineStore('formStore', () => {
       compraFarmacia: corteActual.value.gastos.comprasFarmacia,
       sobrante: corteActual.value.corte.sobrante,
       faltante: corteActual.value.corte.faltante,
-      totalPorCajero: corteActual.value.montos.efectivo + corteActual.value.montos.tarjeta 
+      //totalPorCajero: (corteActual.value.montos.efectivo + corteActual.value.montos.tarjeta + corteActual.value.corte.sobrante) - (corteActual.value.corte.faltante + corteActual.value.gastos.gastoFarmacia + corteActual.value.gastos.comprasFarmacia)
     }
   
     try {
