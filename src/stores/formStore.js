@@ -2,6 +2,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { crearCorte } from '@/services/cortes.services.js'
+import { prepararFechaParaGuardar } from '@/utils/fechas';
+
 
 export const useFormStore = defineStore('formStore', () => {
   const cortes = ref([])
@@ -33,33 +35,22 @@ export const useFormStore = defineStore('formStore', () => {
     return `corte_${Date.now()}_${Math.floor(Math.random() * 1000)}`
   }
 
-  const combinarFechaConHoraLocal = (fechaSeleccionada) => {
-    const fecha = new Date(fechaSeleccionada); // Esto ya es en tu zona horaria local si trabajas con Date
-    const ahora = new Date();
   
-    // En lugar de modificar la fecha UTC, lo hacemos en local:
-    fecha.setHours(ahora.getHours(), ahora.getMinutes(), ahora.getSeconds(), ahora.getMilliseconds());
-  
-    return fecha;
-  }
-  
-  
-  const obtenerFechaHoraActual = () => {
-    return new Date().toISOString()
-  }
-
   const enviarCorte = async () => {
+    const fechaForm = corteActual.value.fecha;
     const corteFinal = {
       userId: userId.value,
       branchId: branchId.value,
-      fecha: combinarFechaConHoraLocal(corteActual.value.fecha),
+      fecha: fechaForm,
       cajero: corteActual.value.cajero,
       efectivo: corteActual.value.montos.efectivo,
       tarjeta: corteActual.value.montos.tarjeta,
       gastoFarmacia: corteActual.value.gastos.gastoFarmacia,
+      conceptoGastoFarmacia: corteActual.value.gastos.conceptoGastoFarmacia,
       compraFarmacia: corteActual.value.gastos.comprasFarmacia,
+      tipoCompraFarmacia: corteActual.value.gastos.tipoCompraFarmacia,
       sobrante: corteActual.value.corte.sobrante,
-      faltante: corteActual.value.corte.faltante,
+      faltante: corteActual.value.corte.faltante
       //totalPorCajero: (corteActual.value.montos.efectivo + corteActual.value.montos.tarjeta + corteActual.value.corte.sobrante) - (corteActual.value.corte.faltante + corteActual.value.gastos.gastoFarmacia + corteActual.value.gastos.comprasFarmacia)
     }
   

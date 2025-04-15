@@ -42,12 +42,14 @@
           <tr class="bg-[#009fe3] text-white">
             <th class="hidden md:table-cell">ID</th>
             <th>Fecha</th>
-            <th>Hora</th>
+            <!-- <th>Hora</th> -->
             <th>Cajero</th>
             <th>Efectivo</th>
             <th>Tarjeta</th>
             <th>Gasto Farmacia</th>
+            <th>Concepto</th>
             <th>Compra Farmacia</th>
+            <th>Tipo de Compra</th>
             <th>Retiro</th>
             <th class="hidden md:table-cell">Sobrante</th>
             <th class="hidden md:table-cell">Faltante</th>
@@ -63,17 +65,20 @@
 
             <td class="hidden md:table-cell text-gray-500">#{{ corte.id }}</td>
             <td>{{ formatDateToDDMMYYYY(corte.fecha) }}</td>
-            <td>{{ formatTimeToHHMMAMPM(corte.fecha) }}</td>
+            <!-- <td>{{ formatTimeToHHMMAMPM(corte.fecha) }}</td> -->
             <td class="font-semibold text-[#009fe3] flex items-center gap-1">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c3.314 0 6.374 1.21 8.879 3.204M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg> ${`Cajero` corte.cajero}
+              </svg>
+              Cajero {{corte.cajero}}
             </td>
             <td class="text-green-600 font-medium">${{ corte.efectivo }}</td>
             <td class="text-blue-600 font-medium">${{ corte.tarjeta }}</td>
             <td>{{ corte.gastoFarmacia }}</td>
+            <td>{{ corte.conceptoGastoFarmacia }}</td>
             <td>{{ corte.compraFarmacia }}</td>
-            <td> - </td>
+            <td> {{ corte.tipoCompraFarmacia }} </td>
+            <td> {{ corte.retiroTarjeta }} </td>
             <td class="hidden md:table-cell text-orange-500">${{ corte.sobrante }}</td>
             <td class="hidden md:table-cell text-red-500">${{ corte.faltante }}</td>
             <td class="hidden md:table-cell text-teal-600">${{ corte.totalPorCajero }}</td>
@@ -90,21 +95,22 @@ import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue';
 import * as XLSX from 'xlsx';
 import axios from 'axios'
+import { obtenerRangoMesActual, formatearISOaYYYYMMDD } from '@/utils/fechas' // ajusta según tu estructura
 
-const today = new Date();
-const fechaInicio = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
-const fechaFin = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
+const { fechaInicio, fechaFin } = obtenerRangoMesActual();
+console.log(formatearISOaYYYYMMDD(fechaFin), formatearISOaYYYYMMDD(fechaInicio), 'jjjjj')
 
 const formStore = useFormStore();
 const router = useRouter()
 
 const cortes = ref([])
 
+
 const obtenerCortes = async () => {
   try {
-    const response = await axios.post('http://localhost:3000/api/cortes/filtrar', {
-      fechaInicio,
-      fechaFin,
+    const response = await axios.post('http://localhost:3000/api/cortes/fechas-sucursal', {
+      fechaInicio: formatearISOaYYYYMMDD(fechaInicio),
+      fechaFin: formatearISOaYYYYMMDD(fechaFin),
       branchId: '86bd6d81-ee0d-4f63-b661-c058093e590a'
     })
     cortes.value = response.data
