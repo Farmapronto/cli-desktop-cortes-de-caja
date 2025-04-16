@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import DashboardView from '@/views/Home.vue'
 import NotFoundView from '@/views/404NotFoundView.vue'
+import AjustesView from '../views/AjustesView.vue'
 
 const routes = [
   {
@@ -23,6 +24,11 @@ const routes = [
     path:'/cortedetallado',
     name: 'CortesDetallados',
     component: () => import('@/views/CortesDetailView.vue')
+  },
+  {
+    path: '/ajustes',
+    name: 'Ajustes',
+    component: AjustesView
   },
   {
     path: '/:pathMatch(.*)*',
