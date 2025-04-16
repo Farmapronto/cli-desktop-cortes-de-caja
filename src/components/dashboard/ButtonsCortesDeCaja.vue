@@ -1,26 +1,46 @@
 <script setup>
-import { DocumentTextIcon, EyeIcon } from '@heroicons/vue/24/outline';
+import { DocumentTextIcon, EyeIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 </script>
 
 <template>
-	<div class="flex flex-col sm:flex-row gap-4 mt-4">
-		<router-link to="/newcorte">
-			<button
-				class="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold 
-							rounded-xl shadow-lg hover:scale-105 hover:shadow-xl transition-transform duration-300 w-full sm:w-auto"
+	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+		<!-- Generar Corte -->
+		<router-link to="/newcorte" class="group">
+			<div
+				class="bg-gradient-to-br from-blue-500 to-blue-700 text-white p-6 rounded-2xl shadow-lg 
+				group-hover:shadow-2xl transition-all duration-300 cursor-pointer transform group-hover:scale-105 
+				flex flex-col items-center text-center"
 			>
-				<DocumentTextIcon class="w-6 h-6" />
-				Generar Corte de Caja
-			</button>
+				<DocumentTextIcon class="w-14 h-14 mb-4 transition-transform duration-300 group-hover:rotate-6" />
+				<h3 class="text-lg font-semibold">Generar Corte</h3>
+				<p class="text-sm text-white/90 mt-2">Inicia el cierre de tu turno con un nuevo corte.</p>
+			</div>
 		</router-link>
-		<router-link to="/cortes">
-			<button
-				class="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-700 text-white font-semibold 
-							rounded-xl shadow-lg hover:scale-105 hover:shadow-xl transition-transform duration-300 w-full sm:w-auto"
+
+		<!-- Ver Corte por Cajero -->
+		<router-link to="/cortes" class="group">
+			<div
+				class="bg-gradient-to-br from-blue-600 to-blue-800 text-white p-6 rounded-2xl shadow-lg 
+				group-hover:shadow-2xl transition-all duration-300 cursor-pointer transform group-hover:scale-105 
+				flex flex-col items-center text-center"
 			>
-				<EyeIcon class="w-6 h-6" />
-				Ver Cortes
-			</button>
+				<EyeIcon class="w-14 h-14 mb-4 transition-transform duration-300 group-hover:rotate-6" />
+				<h3 class="text-lg font-semibold">Ver Corte por Cajero</h3>
+				<p class="text-sm text-white/90 mt-2">Consulta los cortes individuales realizados.</p>
+			</div>
+		</router-link>
+
+		<!-- Ver Corte a Detalle -->
+		<router-link to="/cortedetallado" class="group">
+			<div
+				class="bg-gradient-to-br from-blue-400 to-blue-600 text-white p-6 rounded-2xl shadow-lg 
+				group-hover:shadow-2xl transition-all duration-300 cursor-pointer transform group-hover:scale-105 
+				flex flex-col items-center text-center"
+			>
+				<MagnifyingGlassIcon class="w-14 h-14 mb-4 transition-transform duration-300 group-hover:rotate-6" />
+				<h3 class="text-lg font-semibold">Ver Corte a Detalle</h3>
+				<p class="text-sm text-white/90 mt-2">Desglosa cada transacción con claridad y precisión.</p>
+			</div>
 		</router-link>
 	</div>
 </template>

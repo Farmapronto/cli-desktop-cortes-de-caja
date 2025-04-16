@@ -3,7 +3,8 @@
       <!-- Topbar y contenido específico -->
       <div class="flex justify-between items-center mb-8">
         <img src="@/assets/farmapronto-logo.png" alt="">
-        <div class="flex items-center space-x-4">
+        <DateWidget />
+        <!-- <div class="flex items-center space-x-4">
           <div class="relative">
             <button class="rounded-full p-2 hover:bg-gray-200 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -11,7 +12,7 @@
               </svg>
             </button>
           </div>
-        </div>
+        </div> -->
       </div>
   
       <MainCards />
@@ -20,10 +21,13 @@
   
   <script>
   import MainCards from '@/components/dashboard/MainCards.vue';
+  import DateWidget from '@/components/dashboard/DateWidget.vue'
+
   
   export default {
     components: {
-      MainCards
+      MainCards,
+      DateWidget
     }
   };
   </script>
