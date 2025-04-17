@@ -1,9 +1,38 @@
+
+<script setup>
+import MainCards from '@/components/dashboard/MainCards.vue';
+import DateWidget from '@/components/dashboard/DateWidget.vue'
+
+import useEasterEgg from '@/composables/useEasterEgg.js'
+import EasterEggModal from '@/components/easterEggs/EasterEggModal.vue'
+
+const {
+  handleClick,
+  showModal,
+  selectedPhrase,
+  closeModal
+} = useEasterEgg()
+
+</script>
+
 <template>
     <div>
       <!-- Topbar y contenido específico -->
       <div class="flex justify-between items-center mb-8">
-        <img src="@/assets/farmapronto-logo.png" alt="">
+        <img
+          src="@/assets/farmapronto-logo.png"
+          alt="Logo"
+          class="cursor-pointer hover:brightness-110 transition duration-300"
+          @click="handleClick"
+        />
+        
         <DateWidget />
+
+        <EasterEggModal
+          :show="showModal"
+          :phrase="selectedPhrase"
+          @close="closeModal"
+        />
         <!-- <div class="flex items-center space-x-4">
           <div class="relative">
             <button class="rounded-full p-2 hover:bg-gray-200 transition-colors">
@@ -18,17 +47,4 @@
       <MainCards />
     </div>
   </template>
-  
-  <script>
-  import MainCards from '@/components/dashboard/MainCards.vue';
-  import DateWidget from '@/components/dashboard/DateWidget.vue'
-
-  
-  export default {
-    components: {
-      MainCards,
-      DateWidget
-    }
-  };
-  </script>
   
